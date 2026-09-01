@@ -1,0 +1,327 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#176b3a">
+<title>FarmProfit SA</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+    background:#f3f6f3;
+    color:#17231b;
+}
+header {
+    background:#176b3a;
+    color:white;
+    padding:18px 14px;
+    text-align:center;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+header h1{margin:0;font-size:25px}
+header p{margin:5px 0 0;font-size:13px;opacity:.9}
+
+nav{
+    display:flex;
+    overflow-x:auto;
+    background:white;
+    border-bottom:1px solid #ddd;
+}
+nav button{
+    border:0;
+    background:white;
+    padding:13px 15px;
+    white-space:nowrap;
+    font-weight:bold;
+    color:#31513d;
+    cursor:pointer;
+}
+nav button.active{
+    color:#176b3a;
+    border-bottom:3px solid #176b3a;
+}
+
+main{max-width:900px;margin:auto;padding:14px}
+.page{display:none}
+.page.active{display:block}
+
+.card{
+    background:white;
+    border-radius:14px;
+    padding:16px;
+    margin-bottom:14px;
+    box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+.card h2, .card h3{margin-top:0}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+}
+@media(min-width:700px){
+    .grid{grid-template-columns:repeat(4,1fr)}
+}
+
+.stat{
+    background:#eef7f0;
+    border-radius:12px;
+    padding:13px;
+}
+.stat small{display:block;color:#55705d}
+.stat strong{font-size:20px;display:block;margin-top:4px}
+
+label{
+    display:block;
+    font-size:13px;
+    font-weight:bold;
+    margin-top:10px;
+}
+input, select{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccd5ce;
+    border-radius:9px;
+    font-size:16px;
+    margin-top:5px;
+    background:white;
+}
+
+button.primary{
+    width:100%;
+    padding:13px;
+    border:0;
+    border-radius:10px;
+    background:#176b3a;
+    color:white;
+    font-weight:bold;
+    margin-top:14px;
+    cursor:pointer;
+}
+button.secondary{
+    width:100%;
+    padding:11px;
+    border:1px solid #176b3a;
+    border-radius:10px;
+    background:white;
+    color:#176b3a;
+    font-weight:bold;
+    margin-top:8px;
+    cursor:pointer;
+}
+button.danger{
+    background:#b42318;
+    color:white;
+    border:0;
+    border-radius:8px;
+    padding:8px 10px;
+    cursor:pointer;
+}
+
+.result{
+    background:#f0f7f2;
+    border-left:5px solid #176b3a;
+    padding:14px;
+    border-radius:8px;
+    margin-top:14px;
+}
+.profit{font-size:27px;font-weight:bold;color:#176b3a}
+.loss{color:#b42318}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    font-size:13px;
+}
+th, td{
+    padding:9px 5px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+.actions button{margin:2px}
+
+.empty{
+    text-align:center;
+    color:#6d796f;
+    padding:25px 10px;
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+.good{background:#dff3e4;color:#176b3a}
+.warn{background:#fff1cc;color:#7a5600}
+.bad{background:#fde0dd;color:#9d2017}
+
+hr{border:0;border-top:1px solid #ddd;margin:16px 0}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🐄 FarmProfit SA</h1>
+    <p>Smart farming profit calculator</p>
+</header>
+
+<nav>
+    <button class="active" onclick="showPage('dashboard', this)">📊 Dashboard</button>
+    <button onclick="showPage('cattle', this)">🐄 Cattle</button>
+    <button onclick="showPage('buy', this)">💰 Buy Calculator</button>
+    <button onclick="showPage('feed', this)">🌾 Feed</button>
+    <button onclick="showPage('auction', this)">🔨 Auction</button>
+    <button onclick="showPage('expenses', this)">💸 Expenses</button>
+    <button onclick="showPage('backup', this)">💾 Backup</button>
+</nav>
+
+<main>
+    <!-- DASHBOARD PAGE -->
+    <section id="dashboard" class="page active">
+        <div class="card">
+            <div class="result">
+                <small>Estimated farm profit</small>
+                <div id="dProfit" class="profit">R0</div>
+            </div>
+        </div>
+        <div class="card">
+            <h3>📈 Farm performance</h3>
+            <div id="performance" class="grid">
+                <div class="stat"><small>Total Cattle</small><strong id="statTotal">0</strong></div>
+                <div class="stat"><small>Total Cost</small><strong id="statCost">R0</strong></div>
+                <div class="stat"><small>Proj. Revenue</small><strong id="statRevenue">R0</strong></div>
+                <div class="stat"><small>Avg. Weight</small><strong id="statWeight">0 kg</strong></div>
+            </div>
+        </div>
+        <div class="card">
+            <h3>🐄 Cattle overview</h3>
+            <div id="dashboardCattle"></div>
+        </div>
+    </section>
+
+    <!-- CATTLE MANAGEMENT PAGE -->
+    <section id="cattle" class="page">
+        <div class="card">
+            <h2>🐄 Add / Edit Cattle</h2>
+            <input type="hidden" id="editId">
+            
+            <label>Animal / Lot Number</label>
+            <input id="animalNo" placeholder="Example: 001">
+            
+            <label>Breed</label>
+            <input id="breed" placeholder="Example: Beefmaster">
+            
+            <label>Sex</label>
+            <select id="sex">
+                <option value="Bull">Bull</option>
+                <option value="Heifer">Heifer</option>
+                <option value="Cow">Cow</option>
+                <option value="Steer">Steer</option>
+            </select>
+            
+            <label>Date Bought</label>
+            <input type="date" id="buyDate">
+            
+            <label>Purchase Weight (kg)</label>
+            <input type="number" id="purchaseWeight" placeholder="240">
+            
+            <label>Current Weight (kg)</label>
+            <input type="number" id="currentWeight" placeholder="350">
+            
+            <label>Target Sale Weight (kg)</label>
+            <input type="number" id="targetWeight" placeholder="450">
+            
+            <label>Purchase Price (R)</label>
+            <input type="number" id="purchasePrice" placeholder="8000">
+            
+            <label>Expected Sale Price (R/kg)</label>
+            <input type="number" id="salePriceKg" placeholder="50">
+            
+            <label>Feed Cost to Date (R)</label>
+            <input type="number" id="feedCost" placeholder="0" value="0">
+            
+            <label>Other Costs (R)</label>
+            <input type="number" id="otherCost" placeholder="0" value="0">
+            
+            <button class="primary" onclick="saveCattle()">💾 Save Animal</button>
+            <button class="secondary" onclick="clearCattleForm()">Clear</button>
+        </div>
+
+        <div class="card">
+            <h2>🐄 My Cattle</h2>
+            <div id="cattleList"></div>
+        </div>
+    </section>
+
+    <!-- PLACEHOLDER SECTIONS FOR MISSING VIEWS -->
+    <section id="buy" class="page"><div class="card"><h2>💰 Buy Calculator</h2><p>Feature coming soon...</p></div></section>
+    <section id="feed" class="page"><div class="card"><h2>🌾 Feed Management</h2><p>Feature coming soon...</p></div></section>
+    <section id="auction" class="page"><div class="card"><h2>🔨 Auction Tracker</h2><p>Feature coming soon...</p></div></section>
+    <section id="expenses" class="page"><div class="card"><h2>💸 General Expenses</h2><p>Feature coming soon...</p></div></section>
+    <section id="backup" class="page"><div class="card"><h2>💾 Backup Settings</h2><p>Feature coming soon...</p></div></section>
+</main>
+
+<!-- CORE JAVASCRIPT SYSTEM -->
+<script>
+// Reactive Global Database Array
+let cattleDatabase = JSON.parse(localStorage.getItem('farmProfit_cattle')) || [];
+
+// Tab Switching Mechanism
+function showPage(pageId, navButton) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+    
+    const targetPage = document.getElementById(pageId);
+    if(targetPage) targetPage.classList.add('active');
+    if(navButton) navButton.classList.add('active');
+}
+
+// Clear Form Input Data
+function clearCattleForm() {
+    document.getElementById('editId').value = '';
+    document.getElementById('animalNo').value = '';
+    document.getElementById('breed').value = '';
+    document.getElementById('sex').value = 'Bull';
+    document.getElementById('buyDate').value = '';
+    document.getElementById('purchaseWeight').value = '';
+    document.getElementById('currentWeight').value = '';
+    document.getElementById('targetWeight').value = '';
+    document.getElementById('purchasePrice').value = '';
+    document.getElementById('salePriceKg').value = '';
+    document.getElementById('feedCost').value = '0';
+    document.getElementById('otherCost').value = '0';
+}
+
+// Save or Update Cattle Record
+function saveCattle() {
+    const animalNo = document.getElementById('animalNo').value;
+    if (!animalNo) {
+        alert('Please enter an Animal or Lot Number');
+        return;
+    }
+
+    const cattleItem = {
+        id: document.getElementById('editId').value || Date.now().toString(),
+        animalNo: animalNo,
+        breed: document.getElementById('breed').value,
+        sex: document.getElementById('sex').value,
+        buyDate: document.getElementById('buyDate').value,
+        purchaseWeight: parseFloat(document.getElementById('purchaseWeight').value) || 0,
+        currentWeight: parseFloat(document.getElementById('currentWeight').value) || 0,
+        targetWeight: parseFloat(document.getElementById('targetWeight').value) || 0,
+        purchasePrice: parseFloat(document.getElementById('purchasePrice').value) || 0,
+        salePriceKg: parseFloat(document.getElementById('salePriceKg').value) || 0,
+        feedCost: parseFloat(document.getElementById('feedCost').value) || 0,
+        otherCost: parseFloat(document.getElementById('otherCost').value) || 0
+    };
+
+    const existingIndex = cattleDatabase.findIndex(c => c.id === cattleItem.id);
+    if (existingIndex > -1) {
