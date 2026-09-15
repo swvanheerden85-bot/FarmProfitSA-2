@@ -1,1 +1,1528 @@
 
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#176b3a">
+<title>FarmProfit SA</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f3f6f3;
+ color:#17231b;
+}
+
+header{
+ background:#176b3a;
+ color:white;
+ padding:18px 14px;
+ text-align:center;
+ position:sticky;
+ top:0;
+ z-index:20;
+}
+
+header h1{margin:0;font-size:25px}
+header p{margin:5px 0 0;font-size:13px;opacity:.9}
+
+nav{
+ display:flex;
+ overflow-x:auto;
+ background:white;
+ border-bottom:1px solid #ddd;
+ position:sticky;
+ top:76px;
+ z-index:19;
+}
+
+nav button{
+ border:0;
+ background:white;
+ padding:13px 14px;
+ white-space:nowrap;
+ font-weight:bold;
+ color:#31513d;
+}
+
+nav button.active{
+ color:#176b3a;
+ border-bottom:3px solid #176b3a;
+}
+
+main{
+ max-width:1000px;
+ margin:auto;
+ padding:14px;
+}
+
+.page{display:none}
+.page.active{display:block}
+
+.card{
+ background:white;
+ border-radius:14px;
+ padding:16px;
+ margin-bottom:14px;
+ box-shadow:0 2px 8px rgba(0,0,0,.07);
+}
+
+.card h2,.card h3{margin-top:0}
+
+.grid{
+ display:grid;
+ grid-template-columns:repeat(2,1fr);
+ gap:10px;
+}
+
+@media(min-width:700px){
+ .grid{grid-template-columns:repeat(4,1fr)}
+}
+
+.stat{
+ background:#eef7f0;
+ border-radius:12px;
+ padding:13px;
+}
+
+.stat small{
+ display:block;
+ color:#55705d;
+}
+
+.stat strong{
+ font-size:19px;
+ display:block;
+ margin-top:4px;
+}
+
+label{
+ display:block;
+ font-size:13px;
+ font-weight:bold;
+ margin-top:10px;
+}
+
+input,select{
+ width:100%;
+ padding:12px;
+ border:1px solid #ccd5ce;
+ border-radius:9px;
+ font-size:16px;
+ margin-top:5px;
+ background:white;
+}
+
+button.primary{
+ width:100%;
+ padding:13px;
+ border:0;
+ border-radius:10px;
+ background:#176b3a;
+ color:white;
+ font-weight:bold;
+ margin-top:14px;
+}
+
+button.secondary{
+ width:100%;
+ padding:11px;
+ border:1px solid #176b3a;
+ border-radius:10px;
+ background:white;
+ color:#176b3a;
+ font-weight:bold;
+ margin-top:8px;
+}
+
+button.danger{
+ background:#b42318;
+ color:white;
+ border:0;
+ border-radius:8px;
+ padding:8px 10px;
+}
+
+button.small{
+ padding:8px 10px;
+ border:1px solid #176b3a;
+ border-radius:8px;
+ background:white;
+ color:#176b3a;
+ font-weight:bold;
+}
+
+.result{
+ background:#f0f7f2;
+ border-left:5px solid #176b3a;
+ padding:14px;
+ border-radius:8px;
+ margin-top:14px;
+}
+
+.profit{
+ font-size:27px;
+ font-weight:bold;
+ color:#176b3a;
+}
+
+.loss{color:#b42318!important}
+
+.good{
+ background:#dff3e4;
+ color:#176b3a;
+}
+
+.warn{
+ background:#fff1cc;
+ color:#7a5600;
+}
+
+.bad{
+ background:#fde0dd;
+ color:#9d2017;
+}
+
+.badge{
+ display:inline-block;
+ padding:5px 9px;
+ border-radius:20px;
+ font-size:12px;
+ font-weight:bold;
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ font-size:13px;
+}
+
+th,td{
+ padding:9px 5px;
+ border-bottom:1px solid #ddd;
+ text-align:left;
+}
+
+.tableWrap{
+ overflow-x:auto;
+}
+
+.empty{
+ text-align:center;
+ color:#6d796f;
+ padding:25px 10px;
+}
+
+.animalCard{
+ border:1px solid #ddd;
+ border-radius:12px;
+ padding:13px;
+ margin-bottom:10px;
+}
+
+.animalTop{
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+ align-items:center;
+}
+
+.animalName{
+ font-size:18px;
+ font-weight:bold;
+ color:#176b3a;
+}
+
+.actions{
+ display:flex;
+ gap:6px;
+ flex-wrap:wrap;
+ margin-top:10px;
+}
+
+.actions button{
+ flex:1;
+ min-width:70px;
+}
+
+hr{
+ border:0;
+ border-top:1px solid #ddd;
+ margin:16px 0;
+}
+
+.note{
+ font-size:12px;
+ color:#66736a;
+ line-height:1.5;
+}
+
+.highlight{
+ font-size:22px;
+ font-weight:bold;
+ color:#176b3a;
+}
+
+footer{
+ text-align:center;
+ padding:25px;
+ color:#718076;
+ font-size:12px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🐄 FarmProfit SA</h1>
+<p>Cattle • Feed • Growth • Profit</p>
+</header>
+
+<nav>
+<button class="active" onclick="showPage('dashboard',this)">📊 Dashboard</button>
+<button onclick="showPage('cattle',this)">🐄 Cattle</button>
+<button onclick="showPage('buy',this)">💰 Buy</button>
+<button onclick="showPage('feed',this)">🌾 Feed</button>
+<button onclick="showPage('auction',this)">🔨 Auction</button>
+<button onclick="showPage('expenses',this)">💸 Expenses</button>
+<button onclick="showPage('backup',this)">💾 Backup</button>
+</nav>
+
+<main>
+
+<!-- DASHBOARD -->
+
+<section id="dashboard" class="page active">
+
+<div class="card">
+<h2>📊 Farm Dashboard</h2>
+
+<div class="result">
+<small>Estimated Farm Profit</small>
+<div id="dProfit" class="profit">R0</div>
+</div>
+</div>
+
+<div class="card">
+<div class="grid">
+
+<div class="stat">
+<small>🐄 Cattle</small>
+<strong id="statTotal">0</strong>
+</div>
+
+<div class="stat">
+<small>💰 Total Invested</small>
+<strong id="statCost">R0</strong>
+</div>
+
+<div class="stat">
+<small>💵 Expected Sales</small>
+<strong id="statRevenue">R0</strong>
+</div>
+
+<div class="stat">
+<small>⚖️ Avg Weight</small>
+<strong id="statWeight">0 kg</strong>
+</div>
+
+<div class="stat">
+<small>🌾 Feed Costs</small>
+<strong id="statFeed">R0</strong>
+</div>
+
+<div class="stat">
+<small>💸 Other Costs</small>
+<strong id="statOther">R0</strong>
+</div>
+
+<div class="stat">
+<small>📈 Avg ADG</small>
+<strong id="statADG">0 kg/day</strong>
+</div>
+
+<div class="stat">
+<small>💰 Profit/Animal</small>
+<strong id="statAnimalProfit">R0</strong>
+</div>
+
+</div>
+</div>
+
+<div class="card">
+<h3>🏆 Best Performing Cattle</h3>
+<div id="bestCattle"></div>
+</div>
+
+<div class="card">
+<h3>🐄 Herd Overview</h3>
+<div id="dashboardCattle"></div>
+</div>
+
+</section>
+
+
+<!-- CATTLE -->
+
+<section id="cattle" class="page">
+
+<div class="card">
+
+<h2>🐄 Add / Edit Cattle</h2>
+
+<input type="hidden" id="editId">
+
+<label>Animal / Lot Number</label>
+<input id="animalNo" placeholder="Example: 001">
+
+<label>Breed</label>
+<input id="breed" placeholder="Example: Beefmaster">
+
+<label>Sex</label>
+<select id="sex">
+<option>Bull</option>
+<option>Heifer</option>
+<option>Cow</option>
+<option>Steer</option>
+</select>
+
+<label>Date Bought</label>
+<input type="date" id="buyDate">
+
+<label>Purchase Weight (kg)</label>
+<input type="number" id="purchaseWeight" placeholder="240">
+
+<label>Current Weight (kg)</label>
+<input type="number" id="currentWeight" placeholder="350">
+
+<label>Target Sale Weight (kg)</label>
+<input type="number" id="targetWeight" placeholder="450">
+
+<label>Purchase Price (R)</label>
+<input type="number" id="purchasePrice" placeholder="8000">
+
+<label>Expected Sale Price (R/kg)</label>
+<input type="number" id="salePriceKg" placeholder="50">
+
+<label>Feed Cost to Date (R)</label>
+<input type="number" id="feedCost" value="0">
+
+<label>Other Costs (R)</label>
+<input type="number" id="otherCost" value="0">
+
+<button class="primary" onclick="saveCattle()">💾 Save Animal</button>
+<button class="secondary" onclick="clearCattleForm()">Clear Form</button>
+
+</div>
+
+<div class="card">
+<h2>🐄 My Cattle</h2>
+<div id="cattleList"></div>
+</div>
+
+</section>
+
+
+<!-- BUY CALCULATOR -->
+
+<section id="buy" class="page">
+
+<div class="card">
+
+<h2>💰 Should I Buy This Animal?</h2>
+
+<p class="note">
+Enter the numbers before buying an animal. FarmProfit will estimate the total cost and expected profit.
+</p>
+
+<label>Purchase Weight (kg)</label>
+<input type="number" id="buyWeight" value="240">
+
+<label>Purchase Price (R)</label>
+<input type="number" id="buyPrice" value="8000">
+
+<label>Expected Sale Weight (kg)</label>
+<input type="number" id="buySaleWeight" value="450">
+
+<label>Expected Sale Price (R/kg)</label>
+<input type="number" id="buySalePrice" value="50">
+
+<label>Expected Feed Cost (R)</label>
+<input type="number" id="buyFeedCost" value="0">
+
+<label>Other Costs (R)</label>
+<input type="number" id="buyOtherCost" value="0">
+
+<button class="primary" onclick="calculateBuy()">🧮 Calculate Profit</button>
+
+<div id="buyResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- FEED -->
+
+<section id="feed" class="page">
+
+<div class="card">
+
+<h2>🌾 Feed Calculator</h2>
+
+<label>Number of Cattle</label>
+<input type="number" id="feedAnimals" value="1">
+
+<label>Feed per Animal per Day (kg)</label>
+<input type="number" id="feedKgDay" value="8">
+
+<label>Feed Price (R/ton)</label>
+<input type="number" id="feedPriceTon" value="3500">
+
+<label>Number of Days</label>
+<input type="number" id="feedDays" value="90">
+
+<button class="primary" onclick="calculateFeed()">🌾 Calculate Feed Cost</button>
+
+<div id="feedResult"></div>
+
+</div>
+
+<div class="card">
+
+<h3>💡 Feed Cost Guide</h3>
+
+<p class="note">
+1 ton = 1,000 kg.<br>
+Daily feed cost = cattle × kg/day × price/kg.<br>
+Total feed cost = daily cost × number of days.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- AUCTION -->
+
+<section id="auction" class="page">
+
+<div class="card">
+
+<h2>🔨 Auction Calculator</h2>
+
+<label>Animal Weight (kg)</label>
+<input type="number" id="auctionWeight" value="450">
+
+<label>Price (R/kg)</label>
+<input type="number" id="auctionPrice" value="50">
+
+<label>Auction Commission (%)</label>
+<input type="number" id="auctionCommission" value="5">
+
+<label>Transport (R)</label>
+<input type="number" id="auctionTransport" value="0">
+
+<label>Other Deductions (R)</label>
+<input type="number" id="auctionOther" value="0">
+
+<label>Total Animal Cost (R)</label>
+<input type="number" id="auctionCost" value="0">
+
+<button class="primary" onclick="calculateAuction()">🔨 Calculate Net Profit</button>
+
+<div id="auctionResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- EXPENSES -->
+
+<section id="expenses" class="page">
+
+<div class="card">
+
+<h2>💸 Farm Expenses</h2>
+
+<label>Expense Description</label>
+<input id="expenseName" placeholder="Fuel, medicine, labour, etc.">
+
+<label>Category</label>
+<select id="expenseCategory">
+<option>Feed</option>
+<option>Fuel</option>
+<option>Medicine</option>
+<option>Labour</option>
+<option>Transport</option>
+<option>Repairs</option>
+<option>Other</option>
+</select>
+
+<label>Amount (R)</label>
+<input type="number" id="expenseAmount" placeholder="0">
+
+<button class="primary" onclick="addExpense()">➕ Add Expense</button>
+
+</div>
+
+<div class="card">
+
+<h3>💸 Recorded Expenses</h3>
+<div id="expenseList"></div>
+
+</div>
+
+</section>
+
+
+<!-- BACKUP -->
+
+<section id="backup" class="page">
+
+<div class="card">
+
+<h2>💾 Backup & Restore</h2>
+
+<p class="note">
+Keep a backup of your cattle and expense information. This data is stored on your phone.
+</p>
+
+<button class="primary" onclick="downloadBackup()">
+💾 Download Backup
+</button>
+
+<label>Restore Backup</label>
+<input type="file" id="restoreFile" accept=".json">
+
+<button class="secondary" onclick="restoreBackup()">
+♻️ Restore Backup
+</button>
+
+<button class="danger" style="width:100%;margin-top:15px" onclick="clearAllData()">
+⚠️ Delete All Data
+</button>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+FarmProfit SA • Smart cattle profit management 🐄🇿🇦
+</footer>
+
+
+<script>
+
+let cattleDatabase =
+JSON.parse(localStorage.getItem("farmProfit_cattle")) || [];
+
+let expensesDatabase =
+JSON.parse(localStorage.getItem("farmProfit_expenses")) || [];
+
+
+/* ---------- BASIC FUNCTIONS ---------- */
+
+function money(n){
+ return "R" + Number(n||0).toLocaleString("en-ZA",{
+  minimumFractionDigits:0,
+  maximumFractionDigits:0
+ });
+}
+
+function saveDatabase(){
+ localStorage.setItem(
+  "farmProfit_cattle",
+  JSON.stringify(cattleDatabase)
+ );
+
+ localStorage.setItem(
+  "farmProfit_expenses",
+  JSON.stringify(expensesDatabase)
+ );
+
+ updateAll();
+}
+
+function showPage(id,button){
+
+ document.querySelectorAll(".page")
+ .forEach(p=>p.classList.remove("active"));
+
+ document.querySelectorAll("nav button")
+ .forEach(b=>b.classList.remove("active"));
+
+ document.getElementById(id).classList.add("active");
+
+ if(button) button.classList.add("active");
+
+ window.scrollTo(0,0);
+
+ if(id==="dashboard") updateDashboard();
+ if(id==="cattle") renderCattle();
+ if(id==="expenses") renderExpenses();
+}
+
+
+/* ---------- CATTLE ---------- */
+
+function clearCattleForm(){
+
+ document.getElementById("editId").value="";
+ document.getElementById("animalNo").value="";
+ document.getElementById("breed").value="";
+ document.getElementById("sex").value="Bull";
+ document.getElementById("buyDate").value="";
+ document.getElementById("purchaseWeight").value="";
+ document.getElementById("currentWeight").value="";
+ document.getElementById("targetWeight").value="";
+ document.getElementById("purchasePrice").value="";
+ document.getElementById("salePriceKg").value="";
+ document.getElementById("feedCost").value="0";
+ document.getElementById("otherCost").value="0";
+}
+
+
+function saveCattle(){
+
+ const animalNo =
+ document.getElementById("animalNo").value.trim();
+
+ if(!animalNo){
+  alert("Please enter an Animal or Lot Number.");
+  return;
+ }
+
+ const item={
+
+  id:
+   document.getElementById("editId").value ||
+   Date.now().toString(),
+
+  animalNo:animalNo,
+
+  breed:
+   document.getElementById("breed").value,
+
+  sex:
+   document.getElementById("sex").value,
+
+  buyDate:
+   document.getElementById("buyDate").value,
+
+  purchaseWeight:
+   Number(document.getElementById("purchaseWeight").value)||0,
+
+  currentWeight:
+   Number(document.getElementById("currentWeight").value)||0,
+
+  targetWeight:
+   Number(document.getElementById("targetWeight").value)||0,
+
+  purchasePrice:
+   Number(document.getElementById("purchasePrice").value)||0,
+
+  salePriceKg:
+   Number(document.getElementById("salePriceKg").value)||0,
+
+  feedCost:
+   Number(document.getElementById("feedCost").value)||0,
+
+  otherCost:
+   Number(document.getElementById("otherCost").value)||0
+ };
+
+ const index=cattleDatabase.findIndex(c=>c.id===item.id);
+
+ if(index>=0)
+  cattleDatabase[index]=item;
+ else
+  cattleDatabase.push(item);
+
+ saveDatabase();
+
+ clearCattleForm();
+
+ alert("🐄 Animal saved successfully!");
+
+ renderCattle();
+}
+
+
+function daysOnFarm(c){
+
+ if(!c.buyDate) return 0;
+
+ const start=new Date(c.buyDate);
+ const today=new Date();
+
+ const diff=today-start;
+
+ return Math.max(0,
+  Math.floor(diff/(1000*60*60*24))
+ );
+}
+
+
+function weightGain(c){
+
+ return Math.max(
+  0,
+  Number(c.currentWeight)-Number(c.purchaseWeight)
+ );
+}
+
+
+function adg(c){
+
+ const days=daysOnFarm(c);
+
+ if(days<=0) return 0;
+
+ return weightGain(c)/days;
+}
+
+
+function expectedRevenue(c){
+
+ return Number(c.targetWeight||0) *
+        Number(c.salePriceKg||0);
+}
+
+
+function totalAnimalCost(c){
+
+ return Number(c.purchasePrice||0)+
+        Number(c.feedCost||0)+
+        Number(c.otherCost||0);
+}
+
+
+function animalProfit(c){
+
+ return expectedRevenue(c)-totalAnimalCost(c);
+}
+
+
+function editCattle(id){
+
+ const c=cattleDatabase.find(x=>x.id===id);
+
+ if(!c)return;
+
+ document.getElementById("editId").value=c.id;
+ document.getElementById("animalNo").value=c.animalNo;
+ document.getElementById("breed").value=c.breed;
+ document.getElementById("sex").value=c.sex;
+ document.getElementById("buyDate").value=c.buyDate;
+ document.getElementById("purchaseWeight").value=c.purchaseWeight;
+ document.getElementById("currentWeight").value=c.currentWeight;
+ document.getElementById("targetWeight").value=c.targetWeight;
+ document.getElementById("purchasePrice").value=c.purchasePrice;
+ document.getElementById("salePriceKg").value=c.salePriceKg;
+ document.getElementById("feedCost").value=c.feedCost;
+ document.getElementById("otherCost").value=c.otherCost;
+
+ showPage("cattle");
+
+ window.scrollTo(0,0);
+}
+
+
+function deleteCattle(id){
+
+ if(!confirm("Delete this animal?"))return;
+
+ cattleDatabase=
+ cattleDatabase.filter(c=>c.id!==id);
+
+ saveDatabase();
+ renderCattle();
+}
+
+
+function renderCattle(){
+
+ const box=document.getElementById("cattleList");
+
+ if(!cattleDatabase.length){
+
+  box.innerHTML=
+  '<div class="empty">🐄 No cattle added yet.<br>Add your first animal above.</div>';
+
+  return;
+ }
+
+ box.innerHTML=cattleDatabase.map(c=>{
+
+  const profit=animalProfit(c);
+  const gain=weightGain(c);
+  const daily=adg(c);
+
+  return `
+
+  <div class="animalCard">
+
+   <div class="animalTop">
+
+    <div>
+     <div class="animalName">
+      🐄 ${escapeHtml(c.animalNo)}
+     </div>
+
+     <div class="note">
+      ${escapeHtml(c.breed||"Breed not entered")}
+      • ${escapeHtml(c.sex)}
+     </div>
+    </div>
+
+    <span class="badge ${profit>=0?"good":"bad"}">
+     ${profit>=0?"PROFIT":"LOSS"}
+    </span>
+
+   </div>
+
+   <hr>
+
+   <div class="grid">
+
+    <div class="stat">
+     <small>Purchase</small>
+     <strong>${money(c.purchasePrice)}</strong>
+    </div>
+
+    <div class="stat">
+     <small>Current Weight</small>
+     <strong>${c.currentWeight} kg</strong>
+    </div>
+
+    <div class="stat">
+     <small>Weight Gain</small>
+     <strong>${gain.toFixed(1)} kg</strong>
+    </div>
+
+    <div class="stat">
+     <small>ADG</small>
+     <strong>${daily.toFixed(2)} kg</strong>
+    </div>
+
+    <div class="stat">
+     <small>Days on Farm</small>
+     <strong>${daysOnFarm(c)}</strong>
+    </div>
+
+    <div class="stat">
+     <small>Feed Cost</small>
+     <strong>${money(c.feedCost)}</strong>
+    </div>
+
+    <div class="stat">
+     <small>Expected Sale</small>
+     <strong>${money(expectedRevenue(c))}</strong>
+    </div>
+
+    <div class="stat">
+     <small>Expected Profit</small>
+     <strong class="${profit<0?"loss":""}">
+      ${money(profit)}
+     </strong>
+    </div>
+
+   </div>
+
+   <div class="actions">
+
+    <button class="small"
+     onclick="editCattle('${c.id}')">
+     ✏️ Edit
+    </button>
+
+    <button class="danger"
+     onclick="deleteCattle('${c.id}')">
+     🗑️ Delete
+    </button>
+
+   </div>
+
+  </div>
+
+  `;
+
+ }).join("");
+}
+
+
+/* ---------- DASHBOARD ---------- */
+
+function updateDashboard(){
+
+ const total=cattleDatabase.length;
+
+ const invested=
+ cattleDatabase.reduce((s,c)=>s+Number(c.purchasePrice||0),0);
+
+ const feed=
+ cattleDatabase.reduce((s,c)=>s+Number(c.feedCost||0),0);
+
+ const other=
+ cattleDatabase.reduce((s,c)=>s+Number(c.otherCost||0),0);
+
+ const revenue=
+ cattleDatabase.reduce((s,c)=>s+expectedRevenue(c),0);
+
+ const expenses=
+ expensesDatabase.reduce((s,e)=>s+Number(e.amount||0),0);
+
+ const weight=
+ cattleDatabase.reduce((s,c)=>s+Number(c.currentWeight||0),0);
+
+ const totalCost=
+ invested+feed+other+expenses;
+
+ const profit=
+ revenue-totalCost;
+
+ const avgWeight=
+ total?weight/total:0;
+
+ const avgADG=
+ total?
+ cattleDatabase.reduce((s,c)=>s+adg(c),0)/total:0;
+
+ const avgProfit=
+ total?profit/total:0;
+
+ document.getElementById("dProfit").textContent=money(profit);
+
+ document.getElementById("dProfit")
+ .className="profit"+(profit<0?" loss":"");
+
+ document.getElementById("statTotal").textContent=total;
+
+ document.getElementById("statCost").textContent=
+ money(totalCost);
+
+ document.getElementById("statRevenue").textContent=
+ money(revenue);
+
+ document.getElementById("statWeight").textContent=
+ avgWeight.toFixed(0)+" kg";
+
+ document.getElementById("statFeed").textContent=
+ money(feed);
+
+ document.getElementById("statOther").textContent=
+ money(other+expenses);
+
+ document.getElementById("statADG").textContent=
+ avgADG.toFixed(2)+" kg/day";
+
+ document.getElementById("statAnimalProfit").textContent=
+ money(avgProfit);
+
+ renderDashboardCattle();
+ renderBestCattle();
+}
+
+
+function renderDashboardCattle(){
+
+ const box=document.getElementById("dashboardCattle");
+
+ if(!cattleDatabase.length){
+
+  box.innerHTML=
+  '<div class="empty">No cattle added yet.</div>';
+
+  return;
+ }
+
+ box.innerHTML=cattleDatabase.map(c=>{
+
+  const p=animalProfit(c);
+
+  return `
+  <div class="animalCard">
+
+   <strong>🐄 ${escapeHtml(c.animalNo)}</strong>
+
+   <span class="badge ${p>=0?"good":"bad"}">
+    ${money(p)}
+   </span>
+
+   <div class="note">
+    ${c.currentWeight} kg →
+    ${c.targetWeight} kg
+    • ADG ${adg(c).toFixed(2)} kg/day
+   </div>
+
+  </div>
+  `;
+
+ }).join("");
+}
+
+
+function renderBestCattle(){
+
+ const box=document.getElementById("bestCattle");
+
+ if(!cattleDatabase.length){
+
+  box.innerHTML=
+  '<div class="empty">Add cattle to see your best performers.</div>';
+
+  return;
+ }
+
+ const sorted=[...cattleDatabase]
+ .sort((a,b)=>animalProfit(b)-animalProfit(a))
+ .slice(0,3);
+
+ box.innerHTML=sorted.map((c,i)=>`
+
+ <div class="animalCard">
+
+  <strong>
+   ${i===0?"🥇":i===1?"🥈":"🥉"}
+   ${escapeHtml(c.animalNo)}
+  </strong>
+
+  <div class="note">
+   Expected profit:
+   <strong>${money(animalProfit(c))}</strong>
+   • ADG ${adg(c).toFixed(2)} kg/day
+  </div>
+
+ </div>
+
+ `).join("");
+}
+
+
+/* ---------- BUY CALCULATOR ---------- */
+
+function calculateBuy(){
+
+ const weight=Number(document.getElementById("buyWeight").value)||0;
+ const price=Number(document.getElementById("buyPrice").value)||0;
+ const saleWeight=Number(document.getElementById("buySaleWeight").value)||0;
+ const salePrice=Number(document.getElementById("buySalePrice").value)||0;
+ const feed=Number(document.getElementById("buyFeedCost").value)||0;
+ const other=Number(document.getElementById("buyOtherCost").value)||0;
+
+ const gain=saleWeight-weight;
+ const revenue=saleWeight*salePrice;
+ const total=price+feed+other;
+ const profit=revenue-total;
+
+ const margin=revenue?
+  profit/revenue*100:0;
+
+ document.getElementById("buyResult").innerHTML=`
+
+ <div class="result">
+
+  <small>Expected Weight Gain</small>
+  <div class="highlight">${gain.toFixed(0)} kg</div>
+
+  <hr>
+
+  <small>Total Estimated Cost</small>
+  <div>${money(total)}</div>
+
+  <small>Expected Sale Value</small>
+  <div>${money(revenue)}</div>
+
+  <hr>
+
+  <small>Expected Profit</small>
+  <div class="profit ${profit<0?"loss":""}">
+   ${money(profit)}
+  </div>
+
+  <small>Profit Margin</small>
+  <div>${margin.toFixed(1)}%</div>
+
+  <div class="badge ${profit>=0?"good":"bad"}"
+       style="margin-top:12px">
+   ${profit>=0?"✅ LOOKS PROFITABLE":"⚠️ EXPECTED LOSS"}
+  </div>
+
+ </div>
+ `;
+}
+
+
+/* ---------- FEED CALCULATOR ---------- */
+
+function calculateFeed(){
+
+ const animals=
+ Number(document.getElementById("feedAnimals").value)||0;
+
+ const kg=
+ Number(document.getElementById("feedKgDay").value)||0;
+
+ const price=
+ Number(document.getElementById("feedPriceTon").value)||0;
+
+ const days=
+ Number(document.getElementById("feedDays").value)||0;
+
+ const priceKg=price/1000;
+
+ const dailyKg=animals*kg;
+
+ const dailyCost=dailyKg*priceKg;
+
+ const totalKg=dailyKg*days;
+
+ const totalCost=dailyCost*days;
+
+ document.getElementById("feedResult").innerHTML=`
+
+ <div class="result">
+
+  <small>Daily Feed Required</small>
+  <div class="highlight">
+   ${dailyKg.toFixed(1)} kg
+  </div>
+
+  <small>Daily Feed Cost</small>
+  <div>${money(dailyCost)}</div>
+
+  <small>Total Feed Required</small>
+  <div>${(totalKg/1000).toFixed(2)} tons</div>
+
+  <small>Total Feed Cost</small>
+  <div class="profit">${money(totalCost)}</div>
+
+ </div>
+ `;
+}
+
+
+/* ---------- AUCTION ---------- */
+
+function calculateAuction(){
+
+ const weight=
+ Number(document.getElementById("auctionWeight").value)||0;
+
+ const price=
+ Number(document.getElementById("auctionPrice").value)||0;
+
+ const commission=
+ Number(document.getElementById("auctionCommission").value)||0;
+
+ const transport=
+ Number(document.getElementById("auctionTransport").value)||0;
+
+ const other=
+ Number(document.getElementById("auctionOther").value)||0;
+
+ const cost=
+ Number(document.getElementById("auctionCost").value)||0;
+
+ const gross=weight*price;
+
+ const commissionValue=
+ gross*commission/100;
+
+ const deductions=
+ commissionValue+transport+other;
+
+ const net=gross-deductions;
+
+ const profit=net-cost;
+
+ document.getElementById("auctionResult").innerHTML=`
+
+ <div class="result">
+
+  <small>Gross Sale</small>
+  <div>${money(gross)}</div>
+
+  <small>Commission</small>
+  <div>${money(commissionValue)}</div>
+
+  <small>Total Deductions</small>
+  <div>${money(deductions)}</div>
+
+  <small>Net Sale</small>
+  <div>${money(net)}</div>
+
+  <hr>
+
+  <small>Profit After Costs</small>
+
+  <div class="profit ${profit<0?"loss":""}">
+   ${money(profit)}
+  </div>
+
+ </div>
+ `;
+}
+
+
+/* ---------- EXPENSES ---------- */
+
+function addExpense(){
+
+ const name=
+ document.getElementById("expenseName").value.trim();
+
+ const category=
+ document.getElementById("expenseCategory").value;
+
+ const amount=
+ Number(document.getElementById("expenseAmount").value)||0;
+
+ if(!name || amount<=0){
+
+  alert("Please enter an expense and amount.");
+
+  return;
+ }
+
+ expensesDatabase.push({
+
+  id:Date.now().toString(),
+  name:name,
+  category:category,
+  amount:amount,
+  date:new Date().toISOString().slice(0,10)
+
+ });
+
+ saveDatabase();
+
+ document.getElementById("expenseName").value="";
+ document.getElementById("expenseAmount").value="";
+
+ renderExpenses();
+}
+
+
+function deleteExpense(id){
+
+ if(!confirm("Delete this expense?"))return;
+
+ expensesDatabase=
+ expensesDatabase.filter(e=>e.id!==id);
+
+ saveDatabase();
+
+ renderExpenses();
+}
+
+
+function renderExpenses(){
+
+ const box=document.getElementById("expenseList");
+
+ if(!expensesDatabase.length){
+
+  box.innerHTML=
+  '<div class="empty">No expenses recorded.</div>';
+
+  return;
+ }
+
+ let total=0;
+
+ box.innerHTML=expensesDatabase
+ .slice()
+ .reverse()
+ .map(e=>{
+
+  total+=Number(e.amount||0);
+
+  return `
+
+  <div class="animalCard">
+
+   <div class="animalTop">
+
+    <div>
+     <strong>${escapeHtml(e.name)}</strong>
+     <div class="note">
+      ${escapeHtml(e.category)}
+      • ${e.date}
+     </div>
+    </div>
+
+    <strong>${money(e.amount)}</strong>
+
+   </div>
+
+   <button class="danger"
+    style="margin-top:8px"
+    onclick="deleteExpense('${e.id}')">
+    Delete
+   </button>
+
+  </div>
+
+  `;
+
+ }).join("");
+
+ box.innerHTML+=`
+
+ <div class="result">
+  <small>Total Recorded Expenses</small>
+  <div class="profit">${money(total)}</div>
+ </div>
+
+ `;
+}
+
+
+/* ---------- BACKUP ---------- */
+
+function downloadBackup(){
+
+ const data={
+
+  version:1,
+  date:new Date().toISOString(),
+  cattle:cattleDatabase,
+  expenses:expensesDatabase
+
+ };
+
+ const blob=new Blob(
+  [JSON.stringify(data,null,2)],
+  {type:"application/json"}
+ );
+
+ const url=URL.createObjectURL(blob);
+
+ const a=document.createElement("a");
+
+ a.href=url;
+ a.download=
+ "FarmProfitSA_Backup_"+new Date()
+ .toISOString().slice(0,10)+".json";
+
+ document.body.appendChild(a);
+ a.click();
+ a.remove();
+
+ URL.revokeObjectURL(url);
+}
+
+
+function restoreBackup(){
+
+ const file=
+ document.getElementById("restoreFile").files[0];
+
+ if(!file){
+
+  alert("Please select your FarmProfit backup file.");
+
+  return;
+ }
+
+ const reader=new FileReader();
+
+ reader.onload=function(){
+
+  try{
+
+   const data=
+   JSON.parse(reader.result);
+
+   if(!data.cattle){
+
+    alert("This does not look like a FarmProfit backup.");
+
+    return;
+   }
+
+   cattleDatabase=data.cattle||[];
+   expensesDatabase=data.expenses||[];
+
+   saveDatabase();
+
+   alert("✅ Backup restored successfully!");
+
+  }catch(error){
+
+   alert("Could not read this backup file.");
+
+  }
+
+ };
+
+ reader.readAsText(file);
+}
+
+
+function clearAllData(){
+
+ if(!confirm(
+  "WARNING: This will delete ALL cattle and expense data from this phone. Continue?"
+ ))return;
+
+ cattleDatabase=[];
+ expensesDatabase=[];
+
+ saveDatabase();
+
+ renderCattle();
+ renderExpenses();
+
+ alert("All FarmProfit data has been deleted.");
+}
+
+
+/* ---------- SAFETY ---------- */
+
+function escapeHtml(text){
+
+ return String(text||"")
+ .replace(/&/g,"&amp;")
+ .replace(/</g,"&lt;")
+ .replace(/>/g,"&gt;")
+ .replace(/"/g,"&quot;")
+ .replace(/'/g,"&#039;");
+}
+
+
+/* ---------- UPDATE EVERYTHING ---------- */
+
+function updateAll(){
+
+ updateDashboard();
+ renderCattle();
+ renderExpenses();
+
+}
+
+
+/* ---------- START APP ---------- */
+
+document.addEventListener("DOMContentLoaded",function(){
+
+ updateAll();
+
+});
+
+</script>
+
+</body>
+</html>
