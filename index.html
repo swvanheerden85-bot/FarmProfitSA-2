@@ -1,45 +1,41 @@
----
-layout: default
-title: FarmProfitSA Enterprise Suite
----
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FarmProfitSA Pro</title>
     <style>
         :root { --primary: #1b5e20; --primary-light: #2e7d32; --secondary: #c62828; --bg: #f4f6f8; --card-bg: #ffffff; --text: #333333; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 0; padding-bottom: 60px; }
         header { background: var(--primary); color: white; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
         .nav-container { display: flex; overflow-x: auto; background: var(--primary-light); padding: 5px 0; white-space: nowrap; -webkit-overflow-scrolling: touch; }
-        .nav-btn { color: #e8f5e9; border: none; background: transparent; padding: 10px 15px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-block; }
+        .nav-btn { color: #e8f5e9; border: none; background: transparent; padding: 12px 18px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-block; -webkit-tap-highlight-color: transparent; }
         .nav-btn.active { color: #ffffff; border-bottom: 3px solid #fff; }
-        .container { padding: 15px; max-width: 600px; margin: auto; }
+        .container { padding: 15px; max-width: 600px; margin: auto; box-sizing: border-box; }
         .app-page { display: none; }
         .app-page.active { display: block; }
         .card { background: var(--card-bg); padding: 15px; border-radius: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.06); margin-bottom: 15px; border-top: 4px solid var(--primary-light); }
         h2 { margin-top: 0; color: var(--primary); font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
         .form-group { margin-bottom: 12px; }
         label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 13px; color: #555; }
-        input, select, textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; background: #fff; }
-        button.main-btn { background: var(--primary); color: white; border: none; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        input, select, textarea { width: 100%; padding: 12px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 16px; background: #fff; -webkit-appearance: none; }
+        button.main-btn { background: var(--primary); color: white; border: none; padding: 14px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; width: 100%; margin-top: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); -webkit-tap-highlight-color: transparent; }
         button.main-btn:hover { background: var(--primary-light); }
         .action-btn-group { display: flex; gap: 8px; margin-top: 10px; }
-        .action-btn { flex: 1; padding: 8px; border-radius: 4px; font-weight: bold; font-size: 12px; text-align: center; border: 1px solid #ccc; background: #fdfdfd; cursor: pointer; }
+        .action-btn { flex: 1; padding: 10px; border-radius: 4px; font-weight: bold; font-size: 13px; text-align: center; border: 1px solid #ccc; background: #fdfdfd; cursor: pointer; }
         .danger-btn { background: #ffebee; color: var(--secondary); border: 1px solid #ffcdd2; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .res-box { background: #f8f9fa; border-left: 4px solid var(--primary-light); padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 14px; }
-        .res-row { display: flex; justify-content: space-between; margin-bottom: 6px; }
+        .res-box { background: #f8f9fa; border-left: 4px solid var(--primary-light); padding: 12px; border-radius: 4px; margin-top: 10px; font-size: 15px; }
+        .res-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
         .res-row:last-child { margin-bottom: 0; }
-        .big-alert { font-size: 26px; font-weight: 800; color: var(--secondary); text-align: center; background: #ffebee; padding: 8px; border-radius: 6px; margin: 8px 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 12px; }
-        th, td { border: 1px solid #e0e0e0; padding: 8px; text-align: left; }
+        .big-alert { font-size: 28px; font-weight: 800; color: var(--secondary); text-align: center; background: #ffebee; padding: 10px; border-radius: 6px; margin: 8px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 13px; }
+        th, td { border: 1px solid #e0e0e0; padding: 10px; text-align: left; }
         th { background: #f5f5f5; font-weight: 600; }
         .calc-screen { background: #222; color: #fff; text-align: right; padding: 15px; font-size: 24px; border-radius: 6px; font-family: monospace; min-height: 35px; word-wrap: break-word; }
         .calc-history { font-size: 14px; color: #aaa; min-height: 18px; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
-        .calc-btn { padding: 15px; background: #e0e0e0; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; text-align: center; }
+        .calc-btn { padding: 18px; background: #e0e0e0; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; text-align: center; -webkit-tap-highlight-color: transparent; }
         .calc-btn.op { background: #ff9800; color: white; }
         .calc-btn.eq { background: var(--primary); color: white; grid-column: span 2; }
         .calc-btn.clear { background: #757575; color: white; }
@@ -50,19 +46,19 @@ title: FarmProfitSA Enterprise Suite
     <header>🇿🇦 FarmProfitSA Pro</header>
 
     <div class="nav-container">
-        <button class="nav-btn active" onclick="switchTab('feed')">🌾 Feed</button>
-        <button class="nav-btn" onclick="switchTab('auction')">🔨 Auction</button>
-        <button class="nav-btn" onclick="switchTab('cashflow')">💰 Cash Flow</button>
-        <button class="nav-btn" onclick="switchTab('health')">🩺 Health</button>
-        <button class="nav-btn" onclick="switchTab('breeding')">🐄 Breeding</button>
-        <button class="nav-btn" onclick="switchTab('security')">🚨 Security</button>
-        <button class="nav-btn" onclick="switchTab('calc')">🧮 Calc</button>
-        <button class="nav-btn" onclick="switchTab('system')">💾 System</button>
+        <button id="nav-feed" class="nav-btn active" onclick="switchTab('feed')">🌾 Feed</button>
+        <button id="nav-auction" class="nav-btn" onclick="switchTab('auction')">🔨 Auction</button>
+        <button id="nav-cashflow" class="nav-btn" onclick="switchTab('cashflow')">💰 Cash Flow</button>
+        <button id="nav-health" class="nav-btn" onclick="switchTab('health')">🩺 Health</button>
+        <button id="nav-breeding" class="nav-btn" onclick="switchTab('breeding')">🐄 Breeding</button>
+        <button id="nav-security" class="nav-btn" onclick="switchTab('security')">🚨 Security</button>
+        <button id="nav-calc" class="nav-btn" onclick="switchTab('calc')">🧮 Calc</button>
+        <button id="nav-system" class="nav-btn" onclick="switchTab('system')">💾 System</button>
     </div>
 
     <div class="container">
 
-        <!-- PAGE 1: FEED CALCULATOR & SAVED RATIONS -->
+        <!-- FEED SECTION -->
         <div id="page-feed" class="app-page active">
             <div class="card">
                 <h2>Feed Formulation Calculator</h2>
@@ -107,7 +103,7 @@ title: FarmProfitSA Enterprise Suite
             </div>
         </div>
 
-        <!-- PAGE 2: AUCTION & SELLING TARGETS -->
+        <!-- AUCTION SECTION -->
         <div id="page-auction" class="app-page">
             <div class="card">
                 <h2>Auction Buying & Sales Targets</h2>
@@ -128,7 +124,7 @@ title: FarmProfitSA Enterprise Suite
             </div>
         </div>
 
-        <!-- PAGE 3: EXPENSES & CASH-FLOW RECORDS -->
+        <!-- CASH FLOW SECTION -->
         <div id="page-cashflow" class="app-page">
             <div class="card">
                 <h2>Log Cash Transaction</h2>
@@ -150,7 +146,7 @@ title: FarmProfitSA Enterprise Suite
             </div>
             <div class="card">
                 <h2>Cash-Flow Statement Ledger</h2>
-                <div id="cashFlowSummary" style="font-weight:bold; padding-bottom:10px; font-size:14px;">Net Balance: R 0.00</div>
+                <div id="cashFlowSummary" style="font-weight:bold; padding-bottom:10px; font-size:15px;">Net Balance: R 0.00</div>
                 <div style="overflow-x:auto;">
                     <table id="tblCash">
                         <thead><tr><th>Date</th><th>Type</th><th>Description</th><th>Value</th><th>Action</th></tr></thead>
@@ -160,8 +156,4 @@ title: FarmProfitSA Enterprise Suite
             </div>
         </div>
 
-        <!-- PAGE 4: HEALTH RECORDS & TREATMENTS -->
-        <div id="page-health" class="app-page">
-            <div class="card">
-                <h2>Log Animal Medical Treatment</h2>
-                <div class="form-group">
+        <!-- HEALTH SECTION -->
