@@ -163,3 +163,169 @@ title: FarmProfitSA Enterprise Suite
                     <label>Animal / Group IDs:</label>
                     <input type="text" id="healthID" placeholder="e.g., Tag 102">
                 </div>
+    <script>
+        var db = { rations: [], cash: [], health: [], breeding: [], security: [] };
+
+        function loadStorage() {
+            var saved = localStorage.getItem('farmprofit_db');
+            if (saved) { try { db = JSON.parse(saved); } catch(e) {} }
+            renderAllTables();
+        }
+        function saveStorage() {
+            localStorage.setItem('farmprofit_db', JSON.stringify(db));
+            renderAllTables();
+        }
+
+        function switchTab(tabId, btnElement) {
+            var pages = document.querySelectorAll('.app-page');
+            for(var i=0; i<pages.length; i++) { pages[i].style.display = 'none'; }
+            var buttons = document.querySelectorAll('.nav-btn');
+            for(var i=0; i<buttons.length; i++) { buttons[i].classList.remove('active'); }
+            document.getElementById('page-' + tabId).style.display = 'block';
+            btnElement.classList.add('active');
+        }
+
+        function formatR(val) { return 'R ' + parseFloat(val).toFixed(2); }
+
+        function runFeedCalc() {
+            var t = +document.getElementById("feedTons").value || 0;
+            var d = +document.getElementById("feedDaily").value || 0;
+            var h = +document.getElementById("feedHeads").value || 0;
+            var day = +document.getElementById("feedDays").value || 0;
+            var costAnimalDay = (t / 1000) * d;
+            var totalFeed = costAnimalDay * h * day;
+            var out = document.getElementById("feedOut");
+            out.style.display = "block";
+            out.innerHTML = "<strong>Results:</strong><br>Cost / Animal / Day: " + formatR(costAnimalDay) + "<br>Total Cost for Plan: " + formatR(totalFeed);
+        }
+        function saveCurrentRation() {
+            var n = document.getElementById("feedName").value;
+            var t = +document.getElementById("feedTons").value || 0;
+            var d = +document.getElementById("feedDaily").value || 0;
+            var h = +document.getElementById("feedHeads").value || 0;
+            var day = +document.getElementById("feedDays").value || 0;
+            var costAnimalDay = (t / 1000) * d;
+            var totalFeed = costAnimalDay * h * day;
+            db.rations.push({ id: Date.now(), name: n, dayCost: costAnimalDay, total: totalFeed });
+            saveStorage();
+        }
+
+        function runAuctionCalc() {
+            var s = +document.getElementById("aucSale").value || 0;
+            var e = +document.getElementById("aucExpenses").value || 0;
+            var m = +document.getElementById("aucMargin").value || 0;
+            var targetProfit = s * (m / 100);
+            var maxBid = s - e - targetProfit;
+            var out = document.getElementById("aucOut");
+            out.style.display = "block";
+            out.innerHTML = "<h2>Buying Threshold</h2><div class='big-alert'>" + formatR(maxBid) + "</div><p>Target Profit: " + formatR(targetProfit) + " per animal</p>";
+        }
+
+        function addTransaction() {
+            var type = document.getElementById("cashType").value;
+            var amt = +document.getElementById("cashAmount").value || 0;
+            var desc = document.getElementById("cashDesc").value || "Uncategorized";
+            db.cash.push({ id: Date.now(), date: new Date().toLocaleDateString('en-ZA'), type: type, desc: desc, amt: amt });
+            document.getElementById("cashAmount").value = "";
+            document.getElementById("cashDesc").value = "";
+            saveStorage();
+        }
+
+        function addHealthRecord() {
+            var tag = document.getElementById("healthID").value || "General";
+            var med = document.getElementById("healthMed").value || "Routine";
+            var date = document.getElementById("healthDate").value || "N/A";
+            db.health.push({ id: Date.now(), tag: tag, med: med, date: date });
+            document.getElementById("healthID").value = "";
+            document.getElementById("healthMed").value = "";
+            saveStorage();
+        }
+
+        function autoCalcCalving() {
+            var d = document.getElementById("breedDate").value;
+            if(!d) return;
+            var m = new Date(d);
+            m.setDate(m.getDate() + 283);
+            document.getElementById("breedCalve").value = m.toISOString().split('T')[0];
+        }
+        function addBreedingRecord() {
+            var tag = document.getElementById("breedCow").value;
+            var date = document.getElementById("breedDate").value;
+            var calve = document.getElementById("breedCalve").value;
+            if(!tag || !date) return alert("Enter Dam ID and Mating Date");
+            db.breeding.push({ id: Date.now(), tag: tag, mated: date, calving: calve });
+            document.getElementById("breedCow").value = "";
+            document.getElementById("breedDate").value = "";
+            document.getElementById("breedCalve").value = "";
+            saveStorage();
+        }
+
+        function addSecurityRecord() {
+            var type = document.getElementById("secType").value;
+            var desc = document.getElementById("secDesc").value || "Logged Event";
+            db.security.push({ id: Date.now(), date: new Date().toLocaleDateString('en-ZA'), type: type, desc: desc });
+            document.getElementById("secDesc").value = "";
+            saveStorage();
+        }
+
+        function deleteItem(arrayName, id) {
+            db[arrayName] = db[arrayName].filter(function(item) { return item.id !== id; });
+            saveStorage();
+        }
+
+        function renderAllTables() {
+            var bRations = document.querySelector("#tblRations tbody"); 
+            if(bRations) { 
+                bRations.innerHTML = ""; 
+                db.rations.forEach(function(r) { 
+                    bRations.innerHTML += "<tr><td>" + r.name + "</td><td>" + formatR(r.dayCost) + "</td><td>" + formatR(r.total) + "</td><td><button class='action-btn danger-btn' onclick='deleteItem(\"rations\"," + r.id + ")'>❌</button></td></tr>"; 
+                }); 
+            }
+            var bCash = document.querySelector("#tblCash tbody"); 
+            if(bCash) { 
+                bCash.innerHTML = ""; var bal = 0; 
+                db.cash.forEach(function(c) { 
+                    bal += (c.type === "Income" ? c.amt : -c.amt); 
+                    bCash.innerHTML += "<tr><td>" + c.date + "</td><td>" + c.type + "</td><td>" + c.desc + "</td><td>" + formatR(c.amt) + "</td><td><button class='action-btn danger-btn' onclick='deleteItem(\"cash\"," + c.id + ")'>❌</button></td></tr>"; 
+                }); 
+                document.getElementById("cashFlowSummary").innerText = "Net Balance: " + formatR(bal); 
+            }
+            var bHealth = document.querySelector("#tblHealth tbody"); 
+            if(bHealth) { 
+                bHealth.innerHTML = ""; 
+                db.health.forEach(function(h) { 
+                    bHealth.innerHTML += "<tr><td>" + h.tag + "</td><td>" + h.med + "</td><td>" + h.date + "</td><td><button class='action-btn danger-btn' onclick='deleteItem(\"health\"," + h.id + ")'>❌</button></td></tr>"; 
+                }); 
+            }
+            var bBreed = document.querySelector("#tblBreeding tbody"); 
+            if(bBreed) { 
+                bBreed.innerHTML = ""; 
+                db.breeding.forEach(function(b) { 
+                    bBreed.innerHTML += "<tr><td>" + b.tag + "</td><td>" + b.mated + "</td><td>" + b.calving + "</td><td><button class='action-btn danger-btn' onclick='deleteItem(\"breeding\"," + b.id + ")'>❌</button></td></tr>"; 
+                }); 
+            }
+            var bSec = document.querySelector("#tblSecurity tbody"); 
+            if(bSec) { 
+                bSec.innerHTML = ""; 
+                db.security.forEach(function(s) { 
+                    bSec.innerHTML += "<tr><td>" + s.date + "</td><td>" + s.type + "</td><td>" + s.desc + "</td><td><button class='action-btn danger-btn' onclick='deleteItem(\"security\"," + s.id + ")'>❌</button></td></tr>"; 
+                }); 
+            }
+        }
+
+        var calcStr = "";
+        function pressNum(n) { calcStr += n; updateCalc(); }
+        function pressOp(op) { calcStr += " " + op + " "; updateCalc(); }
+        function pressClear() { calcStr = ""; updateCalc(); document.getElementById("calcHistory").innerText = ""; }
+        function updateCalc() { document.getElementById("calcDisplay").innerText = calcStr || "0"; }
+        function pressEqual() { try { var ans = eval(calcStr); document.getElementById("calcHistory").innerText = calcStr + " ="; calcStr = ans.toString(); updateCalc(); } catch(e) { document.getElementById("calcDisplay").innerText = "Error"; calcStr = ""; } }
+
+        function exportToCSV(type) {
+            var rows = []; var filename = type + "_report.csv";
+            if (type === 'cashflow') { rows = [["Date", "Type", "Description", "Value (R)"]]; db.cash.forEach(function(c) { rows.push([c.date, c.type, c.desc, c.amt]); }); }
+            else if (type === 'security') { rows = [["Date", "Event Category", "Incident Log Detail"]]; db.security.forEach(function(s) { rows.push([s.date, s.type, s.desc]); }); }
+            var csvContent = "data:text/csv;charset=utf-8," + rows.map(function(e) { return e.map(function(val) { return '"' + val + '"'; }).join(","); }).join("\n");
+            var encodedUri = encodeURI(csvContent); var link = document.createElement("a"); link.setAttribute("href", encodedUri); link.setAttribute("download", filename);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+        }
+        function triggerBackupJSON() { var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(db)); var dlAnchorElem = document.createElement('a'); dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", "farmprofit_backup.json"); document.body.appendChild(dlAnchorElem); dlAnchorElem.click(); dlAnchorElem.removeChild(dlAnchorElem); }
